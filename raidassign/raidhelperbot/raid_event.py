@@ -1,6 +1,6 @@
 from typing import List
 from raidassign.raidhelperbot.advanced_settings import AdvancedSettings
-from raidassign.raidhelperbot.player_class import PlayerClass
+from raidassign.raidhelperbot.player_class import RaidhelperPlayerClass
 from raidassign.raidhelperbot.player_role import PlayerRole
 from raidassign.raidhelperbot.signup import Signup
 
@@ -61,8 +61,8 @@ class RaidEvent:
         # Complex objects and arrays
         self.advanced_settings: AdvancedSettings = AdvancedSettings(
             json_data.get('advancedSettings', {}))
-        self.classes: List[PlayerClass] = [PlayerClass(json_data=each_class)
-                                           for each_class in json_data.get('classes', [])]
+        self.classes: List[RaidhelperPlayerClass] = [RaidhelperPlayerClass(json_data=each_class)
+                                                     for each_class in json_data.get('classes', [])]
         self.roles: List[PlayerRole] = [PlayerRole(json_data=each_role)
                                         for each_role in json_data.get('roles', [])]
         self.sign_ups: List[Signup] = [Signup(json_data=each_signup)

@@ -10,9 +10,11 @@ from discord.ext import commands
 import toml
 
 from raidassign.bot_client import NocDiscordClient
+from raidassign.planner.planner import run_planner
 from raidassign.raidhelperbot.api import fetch_raid_plan, fetch_signup_data
 from raidassign.raidhelperbot.raid_event import RaidEvent
 from raidassign.cache import RaidCache
+from raidassign.raidhelperbot.raid_plan import RaidPlan
 
 # Load environment variables
 load_dotenv()
@@ -86,36 +88,33 @@ async def on_ready():
 
 
 @bot.tree.command(name="nocraid", description="Fetch and display raid information")
-@discord.app_commands.describe(raid_id="The ID of the raid to fetch")
-async def command_raid(interaction: discord.Interaction, raid_id: str):
+@discord.app_commands.describe(signup_id="The ID of the signup event to fetch",
+                               raid="Abbreviation of the raid to invoke the planning logic. Example: mc, bwl, aq40, naxx")
+async def command_raid(interaction: discord.Interaction, signup_id: str, raid: str):
     """Command to fetch and display raid information."""
     await interaction.response.defer()  # Defer the response as this might take some time
 
     try:
-        raid_plan = fetch_raid_plan(raid_id, cache)
-        if raid_plan:
-            rp_evt = RaidPlan(json_data=raid_plan)
-            embed = discord.Embed(title=rp_evt.title,
-                                  description=rp_evt.description)
-            await interaction.followup.send(embed=embed, ephemeral=True)
+        raid_plan_json = fetch_raid_plan(signup_id, cache)
+        raid_plan: RaidPlan | None = None
+        if raid_plan_json:
+            raid_plan = RaidPlan(json_data=raid_plan_json)
         else:
-            # await interaction.followup.send("Failed to fetch raid plan")
+            await interaction.followup.send("Failed to fetch raid plan", ephemeral=True)
 
-            # Failed to fetch raid plan, fetch signups instead
-            signup_data = fetch_signup_data(raid_id, cache)
-            if signup_data:
-                evt = RaidEvent(json_data=signup_data)
-                # Create an embed for the raid information
-                embed = discord.Embed(
-                    title=f"Raid Information: {evt.title}",
-                    description=f"Date: {evt.date}\nTime: {evt.time}",
-                    color=discord.Color.blue()
-                )
-                await interaction.followup.send(embed=embed, ephemeral=True)
-            else:
-                await interaction.followup.send("Failed to fetch raid data")
+        # Always load signup data
+        signup_data = fetch_signup_data(signup_id, cache)
+        if signup_data:
+            raid_event = RaidEvent(json_data=signup_data)
+        else:
+            await interaction.followup.send("Failed to fetch event signup data. Event must exist and be public.", ephemeral=True)
+            return
+
+        # On success the planner will begin updating the channel. On failure it throws.
+        await run_planner(raid, interaction, raid_event, raid_plan)
+
     except Exception as e:
-        await interaction.followup.send(f"An error occurred: {str(e)}")
+        await interaction.followup.send(f"An error occurred: {str(e)}", ephemeral=True)
 
 
 @bot.tree.command(name="nochelp", description="Show available commands")

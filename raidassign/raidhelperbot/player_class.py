@@ -1,4 +1,4 @@
-class PlayerSpec:
+class RaidhelperPlayerSpec:
     """
     name<string> - The name of this spec.
     emoteId<string> - The emote id of this spec.
@@ -33,7 +33,8 @@ class PlayerSpec:
         output.append(f"  Role Emote: {self.role_emote_id}")
         return "\n".join(output)
 
-class PlayerClass:
+
+class RaidhelperPlayerClass:
     """
     name<string> - The name of this class.
     limit<string> - The maximum allowed sign-ups for this class.
@@ -53,7 +54,7 @@ class PlayerClass:
         self.limit = json_data.get('limit')
         self.emote_id = json_data.get('emoteId')
         self.type = json_data.get('type')
-        self.specs = [PlayerSpec(json_data=each_spec) for each_spec in json_data.get('specs', [])]
+        self.specs = [RaidhelperPlayerSpec(json_data=each_spec) for each_spec in json_data.get('specs', [])]
 
     def __str__(self) -> str:
         """

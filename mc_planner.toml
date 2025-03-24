@@ -1,0 +1,4 @@
+# This section is read in McPlanner.AllBosses
+[all_bosses]
+preferred_healers_maintank = ["Atheria", "Tamarro"]
+preferred_healers_offtank = ["Qelos", "Kragu"]
