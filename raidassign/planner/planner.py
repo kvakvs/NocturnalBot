@@ -40,9 +40,9 @@ def extract_party(raid_event: RaidEvent, raid_plan: RaidPlan | None) -> Party:
              for drop in raid_plan.raid_drops])
     else:
         return Party(
-            [PartyMember(name=member.name, discord_user_id=member.discord_user_id, class_name=member.class_name, role=member.role,
-                         spec=member.specName, group=None)
-             for member in raid_event.members])
+            [PartyMember(name=member.name, discord_user_id=member.user_id, class_name=member.class_name, role=None,
+                         spec=member.spec_name, group=None)
+             for member in raid_event.sign_ups])
 
 
 async def run_planner(raid: str, interaction: discord.Interaction, raid_event: RaidEvent, raid_plan: RaidPlan | None):

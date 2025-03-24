@@ -91,3 +91,9 @@ class Party:
             def filter_fn(member): return member.class_name == PlayerClass.PRIEST
 
         return [member.name for member in self.members if filter_fn(member)]
+
+    def get_class(self, class_names: list[PlayerClass]) -> list[PartyMember]:
+        """
+        Returns a list of players who can use a specific class.
+        """
+        return [member.name for member in self.members if member.class_name in class_names]

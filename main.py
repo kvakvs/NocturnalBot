@@ -87,11 +87,20 @@ async def on_ready():
     await sync_commands()
 
 
+# async def clear_channel(channel: discord.TextChannel):
+#     """Clear the channel of all messages."""
+#     message_ids = []  # Empty list to put all the messages in the log
+#     async for x in bot.logs_from(channel, limit=100):
+#         message_ids.append(x)
+#     await bot.delete_messages(message_ids)
+
+
 @bot.tree.command(name="nocraid", description="Fetch and display raid information")
 @discord.app_commands.describe(signup_id="The ID of the signup event to fetch",
                                raid="Abbreviation of the raid to invoke the planning logic. Example: mc, bwl, aq40, naxx")
 async def command_raid(interaction: discord.Interaction, signup_id: str, raid: str):
     """Command to fetch and display raid information."""
+    # await clear_channel(interaction.channel)
     await interaction.response.defer()  # Defer the response as this might take some time
 
     try:
@@ -99,8 +108,8 @@ async def command_raid(interaction: discord.Interaction, signup_id: str, raid: s
         raid_plan: RaidPlan | None = None
         if raid_plan_json:
             raid_plan = RaidPlan(json_data=raid_plan_json)
-        else:
-            await interaction.followup.send("Failed to fetch raid plan", ephemeral=True)
+        # else:
+        #   await interaction.followup.send("Failed to fetch raid plan", ephemeral=True)
 
         # Always load signup data
         signup_data = fetch_signup_data(signup_id, cache)
