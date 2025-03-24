@@ -10,7 +10,7 @@ from discord.ext import commands
 import toml
 
 from raidassign.bot_client import NocDiscordClient
-from raidassign.raidhelperbot.api import fetch_raid_data
+from raidassign.raidhelperbot.api import fetch_raid_plan, fetch_signup_data
 from raidassign.raidhelperbot.raid_event import RaidEvent
 from raidassign.cache import RaidCache
 
@@ -30,6 +30,7 @@ bot = NocDiscordClient(intents=intents, conf=toml.load("config.toml"))
 # Initialize cache
 cache = RaidCache()
 
+
 def get_invite_url():
     """Generate the proper invite URL for the bot with required permissions."""
     permissions = discord.Permissions(
@@ -46,6 +47,7 @@ def get_invite_url():
         permissions=permissions,
         scopes=['bot', 'applications.commands']
     )
+
 
 async def sync_commands():
     # Clear existing commands
@@ -82,6 +84,7 @@ async def on_ready():
 
     await sync_commands()
 
+
 @bot.tree.command(name="nocraid", description="Fetch and display raid information")
 @discord.app_commands.describe(raid_id="The ID of the raid to fetch")
 async def command_raid(interaction: discord.Interaction, raid_id: str):
@@ -89,20 +92,31 @@ async def command_raid(interaction: discord.Interaction, raid_id: str):
     await interaction.response.defer()  # Defer the response as this might take some time
 
     try:
-        raid_data = fetch_raid_data(raid_id, cache)
-        if raid_data:
-            evt = RaidEvent(json_data=raid_data)
-            # Create an embed for the raid information
-            embed = discord.Embed(
-                title=f"Raid Information: {evt.title}",
-                description=f"Date: {evt.date}\nTime: {evt.time}",
-                color=discord.Color.blue()
-            )
-            await interaction.followup.send(embed=embed)
+        raid_plan = fetch_raid_plan(raid_id, cache)
+        if raid_plan:
+            rp_evt = RaidPlan(json_data=raid_plan)
+            embed = discord.Embed(title=rp_evt.title,
+                                  description=rp_evt.description)
+            await interaction.followup.send(embed=embed, ephemeral=True)
         else:
-            await interaction.followup.send("Failed to fetch raid data")
+            # await interaction.followup.send("Failed to fetch raid plan")
+
+            # Failed to fetch raid plan, fetch signups instead
+            signup_data = fetch_signup_data(raid_id, cache)
+            if signup_data:
+                evt = RaidEvent(json_data=signup_data)
+                # Create an embed for the raid information
+                embed = discord.Embed(
+                    title=f"Raid Information: {evt.title}",
+                    description=f"Date: {evt.date}\nTime: {evt.time}",
+                    color=discord.Color.blue()
+                )
+                await interaction.followup.send(embed=embed, ephemeral=True)
+            else:
+                await interaction.followup.send("Failed to fetch raid data")
     except Exception as e:
         await interaction.followup.send(f"An error occurred: {str(e)}")
+
 
 @bot.tree.command(name="nochelp", description="Show available commands")
 async def command_help(interaction: discord.Interaction):
@@ -112,9 +126,12 @@ async def command_help(interaction: discord.Interaction):
         description="Here are the available commands:",
         color=discord.Color.green()
     )
-    embed.add_field(name="/nocraid <raid_id>", value="Fetch and display raid information", inline=False)
-    embed.add_field(name="/nochelp", value="Show this help message", inline=False)
-    await interaction.response.send_message(embed=embed)
+    embed.add_field(name="/nocraid <raid_id>",
+                    value="Fetch and display raid information", inline=False)
+    embed.add_field(name="/nochelp",
+                    value="Show this help message", inline=False)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
 
 async def main():
     """Main function to run the bot."""
