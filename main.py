@@ -115,6 +115,8 @@ async def command_raid(interaction: discord.Interaction, signup_id: str, raid: s
 
     except Exception as e:
         await interaction.followup.send(f"An error occurred: {str(e)}", ephemeral=True)
+        import traceback
+        traceback.print_exc()
 
 
 @bot.tree.command(name="nochelp", description="Show available commands")

@@ -35,11 +35,13 @@ def get_planners_for(raid: str) -> List[BasePlanner]:
 def extract_party(raid_event: RaidEvent, raid_plan: RaidPlan | None) -> Party:
     if raid_plan is not None:
         return Party(
-            [PartyMember(name=drop.name, discord_user_id=drop.user_id, class_name=drop.class_name, role=get_role(drop.class_name), group=drop.party_id)
+            [PartyMember(name=drop.name, discord_user_id=drop.user_id, class_name=drop.class_name, role=get_role(drop.class_name),
+                         spec=drop.spec, group=drop.party_id)
              for drop in raid_plan.raid_drops])
     else:
         return Party(
-            [PartyMember(member.name, member.discord_user_id, member.class_name, member.role, None)
+            [PartyMember(name=member.name, discord_user_id=member.discord_user_id, class_name=member.class_name, role=member.role,
+                         spec=member.specName, group=None)
              for member in raid_event.members])
 
 

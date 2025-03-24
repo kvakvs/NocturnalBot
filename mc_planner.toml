@@ -1,4 +1,5 @@
 # This section is read in McPlanner.AllBosses
 [all_bosses]
+tanks = ["Cronos", "Yoggosh", "Beastdude"]
 preferred_healers_maintank = ["Atheria", "Tamarro"]
 preferred_healers_offtank = ["Qelos", "Kragu"]
