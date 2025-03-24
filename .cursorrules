@@ -1,0 +1,6 @@
+This is a Discord Bot written in Python which processes raid signups from "Raid Helper Bot" API and also uses 
+text configuration to further instruct the bot how to assign the players per 
+every boss. The bot produces images and text which is sent to the assigned Discord channel.
+
+Use best Python3 practices.
+Prefer TOML for configuration handling.
