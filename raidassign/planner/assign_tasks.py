@@ -1,7 +1,21 @@
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 
-def assign_tasks(players: list[str], tasks: list[str], one_per_player: bool = False) -> Tuple[Dict[str, str], List[str]]:
+def invert_dict(assigns: Dict[Any, List[Any]]) -> Dict[Any, List[Any]]:
+    """
+    Given a dict of {key: [value1, value2, ...]}, return a dict of {value: [key1, key2, ...]}
+    """
+    inverted = {}
+    for k, values in assigns.items():
+        for value in values:
+            if value not in inverted:
+                inverted[value] = [k]
+            else:
+                inverted[value].append(k)
+    return inverted
+
+
+def assign_tasks(players: list[str], tasks: list[str], one_per_player: bool = False, invert_result: bool = False) -> Tuple[Dict[str, List[str]], List[str]]:
     """
     Assigns N tasks to M players. The result would look like:
         G1 G2= player1; G3 G4= player2; ...
@@ -35,18 +49,7 @@ def assign_tasks(players: list[str], tasks: list[str], one_per_player: bool = Fa
             else:
                 extra_players.append(pick_player)
 
+    if invert_result:
+        return invert_dict(assigns), extra_players
+
     return assigns, extra_players
-
-
-def invert_dict(assigns: Dict[str, List[str]]) -> Dict[str, List[str]]:
-    """
-    Given a dict of {key: [value1, value2, ...]}, return a dict of {value: [key1, key2, ...]}
-    """
-    inverted = {}
-    for k, values in assigns.items():
-        for value in values:
-            if value not in inverted:
-                inverted[value] = [k]
-            else:
-                inverted[value].append(k)
-    return inverted

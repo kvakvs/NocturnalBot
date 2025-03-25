@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Callable
 
 
 class PlayerClass(StrEnum):
@@ -63,56 +64,58 @@ class Party:
     def __init__(self, members: list[PartyMember]):
         self.members: list[PartyMember] = members
 
-    def get_decursers(self, favour: str) -> list[PartyMember]:
+    def get_decursers(self, favour: str) -> list[str]:
         """
         Returns a list of players who can remove curses (druid and mage in classic).
         Parameters:
             favour can be "dps", "healer", or "any"
         """
+        filter_fn: Callable[[PartyMember], bool]
         if favour == "dps":
             # Favours mages and balance druids
-            def filter_fn(member): return member.class_name == PlayerClass.MAGE or member.spec == PlayerSpec.BALANCE
+            filter_fn = lambda member: member.class_name == PlayerClass.MAGE or member.spec == PlayerSpec.BALANCE
         elif favour == "healer":
             # Favours healing druids only
-            def filter_fn(member): return member.class_name == PlayerClass.DRUID and member.spec == PlayerSpec.RESTORATION
+            filter_fn = lambda member: member.class_name == PlayerClass.DRUID and member.spec == PlayerSpec.RESTORATION
         else:
             # Takes any of the above
-            def filter_fn(member): return member.class_name == PlayerClass.MAGE or member.class_name == PlayerClass.DRUID
+            filter_fn = lambda member: member.class_name == PlayerClass.MAGE or member.class_name == PlayerClass.DRUID
 
         return [member.name for member in self.members if filter_fn(member)]
 
-    def get_dispelers(self, favour: str) -> list[PartyMember]:
+    def get_dispelers(self, favour: str) -> list[str]:
         """
         Returns a list of players who can dispel magic (priest only for classic Horde).
         Parameters:
             favour can be "dps", "healer", or "any"
         """
+        filter_fn: Callable[[PartyMember], bool]
         if favour == "dps":
             # Favours only shadow priests
-            def filter_fn(member): return member.class_name == PlayerClass.PRIEST and member.spec == PlayerSpec.SHADOW
+            filter_fn = lambda member: member.class_name == PlayerClass.PRIEST and member.spec == PlayerSpec.SHADOW
         elif favour == "healer":
             # Favours only holy and discipline priests
-            def filter_fn(member): return member.class_name == PlayerClass.PRIEST and member.spec in [
+            filter_fn = lambda member: member.class_name == PlayerClass.PRIEST and member.spec in [
                 PlayerSpec.HOLY, PlayerSpec.DISCIPLINE]
         else:
             # Takes any of the above
-            def filter_fn(member): return member.class_name == PlayerClass.PRIEST
+            filter_fn = lambda member: member.class_name == PlayerClass.PRIEST
 
         return [member.name for member in self.members if filter_fn(member)]
 
-    def get_class(self, class_names: list[PlayerClass]) -> list[PartyMember]:
+    def get_class(self, class_names: list[PlayerClass]) -> list[str]:
         """
         Returns a list of players who can use a specific class.
         """
         return [member.name for member in self.members if member.class_name in class_names]
 
-    def get_role(self, role_names: list[PlayerClass]) -> list[PartyMember]:
+    def get_role(self, role_names: list[PlayerClass]) -> list[str]:
         """
         Returns a list of players who can use a specific role.
         """
         return [member.name for member in self.members if member.role in role_names]
 
-    def get_spec(self, spec_names: list[PlayerSpec]) -> list[PartyMember]:
+    def get_spec(self, spec_names: list[PlayerSpec]) -> list[str]:
         """
         Returns a list of players who can use a specific spec.
         """

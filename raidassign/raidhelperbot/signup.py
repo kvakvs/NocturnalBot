@@ -13,13 +13,25 @@ class Signup:
     entryTime<number> - The unix timestamp of the registration time.
     position<number> - The order number of this sign-up.
     """
+    name: str
+    id: int
+    user_id: str
+    class_name: str
+    class_emote_id: str
+    spec_name: str
+    spec_emote_id: str
+    role_name: str
+    role_emote_id: str
+    status: str
+    entry_time: int
+    position: int
 
-    def __init__(self, json_data: dict):
+    def __init__(self, json_data: dict[str, str | int | None]) -> None:
         """
         Initialize a Signup from a JSON object.
 
         Args:
-            json_data (dict): A dictionary containing the signup data
+            json_data (dict[str, str | int | None]): A dictionary containing the signup data
         """
         # User information
         self.name = json_data.get('name')

@@ -31,13 +31,26 @@ class McPlanner:
                             f"offtank healing: {', '.join(preferred_healers_offtank)}")
             await interaction.followup.send(embed=embed)
 
-    def raid_decursers_str(self, party: Party) -> str:
-        decursers, _ = invert_dict(assign_tasks(party.get_decursers(favour="dps"), [f"G{i}" for i in range(1, 8)]))
-        return "; ".join([f"{group}={', '.join(players)}" for group, players in decursers.items()])
+    @staticmethod
+    def raid_decursers_str(party: Party) -> str:
+        decursers, _ = assign_tasks(party.get_decursers(favour="dps"),
+                                    [f"G{i}" for i in range(1, 8)],
+                                    invert_result=True)
 
-    def raid_dispelers_str(self, party: Party) -> str:
-        dispelers, _ = invert_dict(assign_tasks(party.get_dispelers(favour="any"), [f"G{i}" for i in range(1, 8)]))
-        return "; ".join([f"{group}={','.join(players)}" for group, players in dispelers.items()])
+        return "; ".join([
+            f"{group}={', '.join(players)}"
+            for group, players in decursers.items()
+        ])
+
+    @staticmethod
+    def raid_dispelers_str(party: Party) -> str:
+        dispelers, _ = assign_tasks(party.get_dispelers(favour="any"),
+                                    [f"G{i}" for i in range(1, 8)],
+                                    invert_result=True)
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in dispelers.items()
+        ])
 
     class Lucifron(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
@@ -73,8 +86,9 @@ class McPlanner:
             )
             embed.set_image(url="attachment://mc-magmadar.png")
 
-            hunter_tasks, _ = invert_dict(assign_tasks(party.get_class(
-                class_names=[PlayerClass.HUNTER]), ["Tranq1", "Tranq2"]))
+            hunter_tasks, _ = assign_tasks(party.get_class(class_names=[PlayerClass.HUNTER]),
+                                           ["Tranq1", "Tranq2"],
+                                           invert_result=True)
             formatted_tranq = "; ".join([f"{task}={', '.join(hunters)}" for task, hunters in hunter_tasks.items()])
 
             embed.add_field(name="Tanking + Tranq",
@@ -87,7 +101,7 @@ class McPlanner:
             )
 
     class Gehennas(BasePlanner):
-        async def run(self, interaction: discord.Interaction, party: Party):
+        async def run(self, interaction: discord.Interaction, _party: Party):
             all_conf = McPlanner.get_config("all_bosses")
             maintank, offtank1, offtank2 = get_3_tanks(all_conf["tanks"])
 
@@ -109,7 +123,7 @@ class McPlanner:
 
     class Garr(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            all_conf = McPlanner.get_config("all_bosses")
+            # all_conf = McPlanner.get_config("all_bosses")
             # maintank, offtank1, offtank2 = get_3_tanks(all_conf["tanks"])
 
             # For adds tanking we want warlocks to take as many adds as there are warlocks, but only one per warlock
@@ -150,7 +164,20 @@ class McPlanner:
 
     class Geddon(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            pass
+            formatted_dispelers = McPlanner.raid_dispelers_str(party)
+            embed = discord.Embed(
+                title="Geddon",
+                color=0xff0000
+            )
+            embed.set_image(url="attachment://mc-geddon.png")
+            embed.add_field(
+                name="All", value="/rw Person with living bomb run to safe spot. Melee out on inferno. Priests no heal, DISPEL (skip warriors, rogues, ferals)")
+            embed.add_field(
+                name="Dispel", value=f"/rw Dispel magic: {formatted_dispelers}")
+            await interaction.followup.send(
+                embed=embed,
+                file=discord.File("images/mc-geddon.png", filename="mc-geddon.png")
+            )
 
     class Shazzrah(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):

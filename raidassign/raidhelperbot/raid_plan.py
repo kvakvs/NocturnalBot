@@ -1,5 +1,7 @@
 from typing import Dict, Any, List
 
+from raidassign.planner.party import PlayerClass
+
 
 class RaidDrop:
     """
@@ -18,7 +20,7 @@ class RaidDrop:
     def __init__(self, json_data: Dict[str, Any]) -> None:
         self.party_id: int = int(json_data.get('partyId'))
         self.slot_id: int = int(json_data.get('slotId'))
-        self.class_name: str = json_data.get('class')
+        self.class_name: PlayerClass = PlayerClass(json_data.get('class'))
         self.spec: str = json_data.get('spec')
         self.name: str = json_data.get('name')
         self.color: str = json_data.get('color')
