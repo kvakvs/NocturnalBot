@@ -1,7 +1,7 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
-def assign_tasks(players: list[str], tasks: list[str]) -> Dict[str, str]:
+def assign_tasks(players: list[str], tasks: list[str], one_per_player: bool = False) -> Tuple[Dict[str, str], List[str]]:
     """
     Assigns N tasks to M players. The result would look like:
         G1 G2= player1; G3 G4= player2; ...
@@ -12,6 +12,7 @@ def assign_tasks(players: list[str], tasks: list[str]) -> Dict[str, str]:
     tasks_adjusted = tasks.copy()
     available_players = True
     available_tasks = True
+    extra_players = []  # in one_per_player mode these are extra players not getting a task (FFA basically)
 
     while available_players and available_tasks:
         # Round-robin the same players if more tasks are available
@@ -29,9 +30,12 @@ def assign_tasks(players: list[str], tasks: list[str]) -> Dict[str, str]:
         if task not in assigns:
             assigns[task] = [pick_player]
         else:
-            assigns[task].append(pick_player)
+            if not one_per_player:
+                assigns[task].append(pick_player)
+            else:
+                extra_players.append(pick_player)
 
-    return assigns
+    return assigns, extra_players
 
 
 def invert_dict(assigns: Dict[str, List[str]]) -> Dict[str, List[str]]:

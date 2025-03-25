@@ -18,9 +18,17 @@ class PlayerClass(StrEnum):
 class PlayerSpec(StrEnum):
     BALANCE = "Balance"
     RESTORATION = "Restoration"
+    FERAL = "Feral"
+    ENHANCEMENT = "Enhancement"
+    ELEMENTAL = "Elemental"
+
     HOLY = "Holy"
     DISCIPLINE = "Discipline"
     SHADOW = "Shadow"
+
+    PROTECTION = "Protection"
+    FURY = "Fury"
+    ARMS = "Arms"
 
 
 def get_role(class_name: PlayerClass) -> PlayerClass | None:
@@ -97,3 +105,15 @@ class Party:
         Returns a list of players who can use a specific class.
         """
         return [member.name for member in self.members if member.class_name in class_names]
+
+    def get_role(self, role_names: list[PlayerClass]) -> list[PartyMember]:
+        """
+        Returns a list of players who can use a specific role.
+        """
+        return [member.name for member in self.members if member.role in role_names]
+
+    def get_spec(self, spec_names: list[PlayerSpec]) -> list[PartyMember]:
+        """
+        Returns a list of players who can use a specific spec.
+        """
+        return [member.name for member in self.members if member.spec in spec_names]

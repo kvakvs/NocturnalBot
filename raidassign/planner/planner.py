@@ -17,8 +17,9 @@ def get_planners_for(raid: str) -> List[BasePlanner]:
     if raid == "mc":
         from raidassign.planner.mc_planner import McPlanner
         return [
-            McPlanner.AllBosses(),
-            McPlanner.Lucifron(), McPlanner.Magmadar(), McPlanner.Gehennas(), McPlanner.Garr(),
+            # McPlanner.AllBosses(),
+            # McPlanner.Lucifron(), McPlanner.Magmadar(),
+            McPlanner.Gehennas(), McPlanner.Garr(),
             McPlanner.Geddon(), McPlanner.Shazzrah(), McPlanner.SulfuronHarbinger(),
             McPlanner.Majordomo(), McPlanner.Ragnaros()
         ]
