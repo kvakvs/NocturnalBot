@@ -32,7 +32,7 @@ class McPlanner:
             await interaction.followup.send(embed=embed)
 
     @staticmethod
-    def raid_decursers_str(party: Party) -> str:
+    def raid_decursers_fav_dps(party: Party) -> str:
         decursers, _ = assign_tasks(party.get_decursers(favour="dps"),
                                     [f"G{i}" for i in range(1, 8)],
                                     invert_result=True)
@@ -57,7 +57,7 @@ class McPlanner:
             all_conf = McPlanner.get_config("all_bosses")
             maintank, offtank1, offtank2 = get_3_tanks(all_conf["tanks"])
 
-            formatted_decursers = McPlanner.raid_decursers_str(party)
+            formatted_decursers = McPlanner.raid_decursers_fav_dps(party)
             formatted_dispelers = McPlanner.raid_dispelers_str(party)
 
             embed = discord.Embed(
@@ -181,7 +181,18 @@ class McPlanner:
 
     class Shazzrah(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            pass
+            formatted_decursers = McPlanner.raid_decursers_fav_dps(party)
+            embed = discord.Embed(
+                title="Shazzrah",
+                color=0xff0000
+            )
+            embed.set_image(url="attachment://mc-shazzrah.png")
+            embed.add_field(name="Decursing",
+                            value=f"/rw Decursing (SELF FIRST): {formatted_decursers}")
+            await interaction.followup.send(
+                embed=embed,
+                file=discord.File("images/mc-shazzrah.png", filename="mc-shazzrah.png")
+            )
 
     class SulfuronHarbinger(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
@@ -194,3 +205,18 @@ class McPlanner:
     class Ragnaros(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
             pass
+
+    @staticmethod
+    def get_all() -> dict[str, BasePlanner]:
+        return {
+            "all": McPlanner.AllBosses(),
+            "lucifron": McPlanner.Lucifron(),
+            "magmadar": McPlanner.Magmadar(),
+            "gehennas": McPlanner.Gehennas(),
+            "garr": McPlanner.Garr(),
+            "geddon": McPlanner.Geddon(),
+            "shazzrah": McPlanner.Shazzrah(),
+            "sulfuron": McPlanner.SulfuronHarbinger(),
+            "majordomo": McPlanner.Majordomo(),
+            "ragnaros": McPlanner.Ragnaros()
+        }

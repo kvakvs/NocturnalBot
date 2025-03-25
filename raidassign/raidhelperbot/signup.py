@@ -1,3 +1,6 @@
+from raidassign.planner.party import PlayerClass
+
+
 class Signup:
     """
     name<string> - The name of the user.
@@ -16,7 +19,7 @@ class Signup:
     name: str
     id: int
     user_id: str
-    class_name: str
+    class_name: PlayerClass
     class_emote_id: str
     spec_name: str
     spec_emote_id: str
@@ -39,7 +42,7 @@ class Signup:
         self.user_id = json_data.get('userId')
 
         # Class information
-        self.class_name = json_data.get('className')
+        self.class_name = PlayerClass(json_data.get('className'))
         self.class_emote_id = json_data.get('classEmoteId')
 
         # Spec information

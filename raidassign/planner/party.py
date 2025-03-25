@@ -14,6 +14,10 @@ class PlayerClass(StrEnum):
     ROGUE = "Rogue"
     # PALADIN = "Paladin"
     # DEATH_KNIGHT = "Death Knight"
+    # --- Artifacts from the signup bot ---
+    TENTATIVE = "Tentative"
+    ABSENCE = "Absence"
+    BENCH = "Bench"
 
 
 class PlayerSpec(StrEnum):
@@ -70,16 +74,26 @@ class Party:
         Parameters:
             favour can be "dps", "healer", or "any"
         """
+
+        def filter_mages_and_balance(member):
+            """Favours mages and balance druids"""
+            return member.class_name == PlayerClass.MAGE or member.spec == PlayerSpec.BALANCE
+
+        def filter_healing_druids(member):
+            """Favours healing druids only"""
+            return member.class_name == PlayerClass.DRUID and member.spec == PlayerSpec.RESTORATION
+
+        def filter_any_decursers(member):
+            """Takes any of the above"""
+            return member.class_name == PlayerClass.MAGE or member.class_name == PlayerClass.DRUID
+
         filter_fn: Callable[[PartyMember], bool]
         if favour == "dps":
-            # Favours mages and balance druids
-            filter_fn = lambda member: member.class_name == PlayerClass.MAGE or member.spec == PlayerSpec.BALANCE
+            filter_fn = filter_mages_and_balance
         elif favour == "healer":
-            # Favours healing druids only
-            filter_fn = lambda member: member.class_name == PlayerClass.DRUID and member.spec == PlayerSpec.RESTORATION
+            filter_fn = filter_healing_druids
         else:
-            # Takes any of the above
-            filter_fn = lambda member: member.class_name == PlayerClass.MAGE or member.class_name == PlayerClass.DRUID
+            filter_fn = filter_any_decursers
 
         return [member.name for member in self.members if filter_fn(member)]
 
@@ -89,17 +103,27 @@ class Party:
         Parameters:
             favour can be "dps", "healer", or "any"
         """
-        filter_fn: Callable[[PartyMember], bool]
-        if favour == "dps":
-            # Favours only shadow priests
-            filter_fn = lambda member: member.class_name == PlayerClass.PRIEST and member.spec == PlayerSpec.SHADOW
-        elif favour == "healer":
-            # Favours only holy and discipline priests
-            filter_fn = lambda member: member.class_name == PlayerClass.PRIEST and member.spec in [
+        def filter_only_shadow_priests(member):
+            """Favours only shadow priests"""
+            return member.class_name == PlayerClass.PRIEST and member.spec == PlayerSpec.SHADOW
+
+        def filter_only_healing_priests(member):
+            """Favours only holy and discipline priests"""
+            return member.class_name == PlayerClass.PRIEST and member.spec in [
                 PlayerSpec.HOLY, PlayerSpec.DISCIPLINE]
+
+        def filter_any_priests(member):
+            """Takes any of the above"""
+            return member.class_name == PlayerClass.PRIEST
+
+        filter_fn: Callable[[PartyMember], bool]
+
+        if favour == "dps":
+            filter_fn = filter_only_shadow_priests
+        elif favour == "healer":
+            filter_fn = filter_only_healing_priests
         else:
-            # Takes any of the above
-            filter_fn = lambda member: member.class_name == PlayerClass.PRIEST
+            filter_fn = filter_any_priests
 
         return [member.name for member in self.members if filter_fn(member)]
 

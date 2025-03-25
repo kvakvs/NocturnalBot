@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Set
 import discord
 
 from raidassign.planner.party import Party, PartyMember, get_role
@@ -13,16 +13,12 @@ class BasePlanner:
         await interaction.followup.send("This default planner implementation does nothing.", ephemeral=True)
 
 
-def get_planners_for(raid: str) -> List[BasePlanner]:
+def get_planners_for(raid: str, only_bosses: Set[str]) -> List[BasePlanner]:
     if raid == "mc":
         from raidassign.planner.mc_planner import McPlanner
-        return [
-            McPlanner.AllBosses(),
-            McPlanner.Lucifron(), McPlanner.Magmadar(), McPlanner.Gehennas(),
-            McPlanner.Garr(),
-            McPlanner.Geddon(), McPlanner.Shazzrah(), McPlanner.SulfuronHarbinger(),
-            McPlanner.Majordomo(), McPlanner.Ragnaros()
-        ]
+        return [p
+                for name, p in McPlanner.get_all().items()
+                if name in only_bosses or not only_bosses]
     # elif raid == "bwl":
     #     return BwlPlanner()
     # elif raid == "aq40":
@@ -41,13 +37,17 @@ def extract_party(raid_event: RaidEvent, raid_plan: RaidPlan | None) -> Party:
              for drop in raid_plan.raid_drops])
     else:
         return Party(
-            [PartyMember(name=member.name, discord_user_id=member.user_id, class_name=member.class_name, role=None,
+            [PartyMember(name=member.name, discord_user_id=int(member.user_id), class_name=member.class_name, role=None,
                          spec=member.spec_name, group=None)
              for member in raid_event.sign_ups])
 
 
-async def run_planner(raid: str, interaction: discord.Interaction, raid_event: RaidEvent, raid_plan: RaidPlan | None):
-    planners = get_planners_for(raid)
+async def run_planner(raid: str,
+                      interaction: discord.Interaction,
+                      raid_event: RaidEvent,
+                      raid_plan: RaidPlan | None,
+                      only_bosses: Set[str]):
+    planners = get_planners_for(raid, only_bosses)
     party = extract_party(raid_event, raid_plan)
     for planner in planners:
         await planner.run(interaction, party)
