@@ -1,4 +1,5 @@
 from raidassign.planner.party import PlayerClass
+from raidassign.utils import safe_cast
 
 
 class Signup:
@@ -37,26 +38,26 @@ class Signup:
             json_data (dict[str, str | int | None]): A dictionary containing the signup data
         """
         # User information
-        self.name = json_data.get('name')
-        self.id = json_data.get('id')
-        self.user_id = json_data.get('userId')
+        self.name = safe_cast(json_data.get('name'), str)
+        self.id = safe_cast(json_data.get('id'), int)
+        self.user_id = safe_cast(json_data.get('userId'), str)
 
         # Class information
         self.class_name = PlayerClass(json_data.get('className'))
-        self.class_emote_id = json_data.get('classEmoteId')
+        self.class_emote_id = safe_cast(json_data.get('classEmoteId'), str)
 
         # Spec information
-        self.spec_name = json_data.get('specName')
-        self.spec_emote_id = json_data.get('specEmoteId')
+        self.spec_name = safe_cast(json_data.get('specName'), str)
+        self.spec_emote_id = safe_cast(json_data.get('specEmoteId'), str)
 
         # Role information
-        self.role_name = json_data.get('roleName')
-        self.role_emote_id = json_data.get('roleEmoteId')
+        self.role_name = safe_cast(json_data.get('roleName'), str)
+        self.role_emote_id = safe_cast(json_data.get('roleEmoteId'), str)
 
         # Status and timing
-        self.status = json_data.get('status')
-        self.entry_time = json_data.get('entryTime')
-        self.position = json_data.get('position')
+        self.status = safe_cast(json_data.get('status'), str)
+        self.entry_time = safe_cast(json_data.get('entryTime'), int)
+        self.position = safe_cast(json_data.get('position'), int)
 
     def __str__(self) -> str:
         """

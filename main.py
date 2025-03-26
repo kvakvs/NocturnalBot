@@ -100,7 +100,7 @@ async def on_ready():
     signup_id="The ID of the signup event to fetch",
     raid="Abbreviation of the raid to invoke the planning logic. Example: mc, bwl, aq40, naxx",
     only_bosses="Comma separated list of boss names (lowercase), to only show them and skip any others")
-async def command_raid(interaction: discord.Interaction, signup_id: str, raid: str, only_bosses: str):
+async def command_raid(interaction: discord.Interaction, signup_id: str, raid: str, only_bosses: str = ""):
     """Command to fetch and display raid information."""
     # await clear_channel(interaction.channel)
     await interaction.response.defer()  # Defer the response as this might take some time
@@ -122,7 +122,7 @@ async def command_raid(interaction: discord.Interaction, signup_id: str, raid: s
             return
 
         # On success the planner will begin updating the channel. On failure it throws.
-        only_bosses_set = set(map(str.strip, only_bosses.split(",")))
+        only_bosses_set = set(map(str.strip, only_bosses.split(","))) if len(only_bosses) > 1 else None
         await run_planner(raid, interaction, raid_event, raid_plan, only_bosses_set)
 
     except Exception as e:

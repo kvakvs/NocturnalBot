@@ -31,34 +31,13 @@ class McPlanner:
                             f"offtank healing: {', '.join(preferred_healers_offtank)}")
             await interaction.followup.send(embed=embed)
 
-    @staticmethod
-    def raid_decursers_fav_dps(party: Party) -> str:
-        decursers, _ = assign_tasks(party.get_decursers(favour="dps"),
-                                    [f"G{i}" for i in range(1, 8)],
-                                    invert_result=True)
-
-        return "; ".join([
-            f"{group}={', '.join(players)}"
-            for group, players in decursers.items()
-        ])
-
-    @staticmethod
-    def raid_dispelers_str(party: Party) -> str:
-        dispelers, _ = assign_tasks(party.get_dispelers(favour="any"),
-                                    [f"G{i}" for i in range(1, 8)],
-                                    invert_result=True)
-        return "; ".join([
-            f"{group}={','.join(players)}"
-            for group, players in dispelers.items()
-        ])
-
     class Lucifron(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
             all_conf = McPlanner.get_config("all_bosses")
             maintank, offtank1, offtank2 = get_3_tanks(all_conf["tanks"])
 
-            formatted_decursers = McPlanner.raid_decursers_fav_dps(party)
-            formatted_dispelers = McPlanner.raid_dispelers_str(party)
+            formatted_decursers = party.get_raid_decursers_fav_dps_formatted()
+            formatted_dispelers = party.get_raid_dispelers_formatted()
 
             embed = discord.Embed(
                 title="Lucifron",
@@ -164,7 +143,7 @@ class McPlanner:
 
     class Geddon(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            formatted_dispelers = McPlanner.raid_dispelers_str(party)
+            formatted_dispelers = party.get_raid_dispelers_formatted()
             embed = discord.Embed(
                 title="Geddon",
                 color=0xff0000
@@ -181,7 +160,7 @@ class McPlanner:
 
     class Shazzrah(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            formatted_decursers = McPlanner.raid_decursers_fav_dps(party)
+            formatted_decursers = party.get_raid_decursers_fav_dps_formatted()
             embed = discord.Embed(
                 title="Shazzrah",
                 color=0xff0000
@@ -196,7 +175,17 @@ class McPlanner:
 
     class SulfuronHarbinger(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            pass
+            formatted_kickers = party.get_interrupts_formatted([RAID_MARK[8], RAID_MARK[7], RAID_MARK[6], RAID_MARK[5]])
+            embed = discord.Embed(
+                title="Sulfuron Harbinger",
+                color=0xff0000
+            )
+            embed.set_image(url="attachment://mc-sulfuron-harbinger.png")
+            embed.add_field(name="Interrupts", value=f"/rw Interrupts: {formatted_kickers}")
+            await interaction.followup.send(
+                embed=embed,
+                file=discord.File("images/mc-sulfuron-harbinger.png", filename="mc-sulfuron-harbinger.png")
+            )
 
     class Majordomo(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):

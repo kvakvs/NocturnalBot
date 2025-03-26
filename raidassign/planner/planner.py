@@ -13,12 +13,12 @@ class BasePlanner:
         await interaction.followup.send("This default planner implementation does nothing.", ephemeral=True)
 
 
-def get_planners_for(raid: str, only_bosses: Set[str]) -> List[BasePlanner]:
+def get_planners_for(raid: str, only_bosses: Set[str] | None) -> List[BasePlanner]:
     if raid == "mc":
         from raidassign.planner.mc_planner import McPlanner
         return [p
                 for name, p in McPlanner.get_all().items()
-                if name in only_bosses or not only_bosses]
+                if not only_bosses or name in only_bosses]
     # elif raid == "bwl":
     #     return BwlPlanner()
     # elif raid == "aq40":
@@ -46,7 +46,7 @@ async def run_planner(raid: str,
                       interaction: discord.Interaction,
                       raid_event: RaidEvent,
                       raid_plan: RaidPlan | None,
-                      only_bosses: Set[str]):
+                      only_bosses: Set[str] | None):
     planners = get_planners_for(raid, only_bosses)
     party = extract_party(raid_event, raid_plan)
     for planner in planners:

@@ -28,7 +28,7 @@ def assign_tasks(players: list[str], tasks: list[str], one_per_player: bool = Fa
     available_tasks = True
     extra_players = []  # in one_per_player mode these are extra players not getting a task (FFA basically)
 
-    while available_players and available_tasks:
+    while available_players or available_tasks:
         # Round-robin the same players if more tasks are available
         if len(players_adjusted) == 0:
             players_adjusted = players.copy()

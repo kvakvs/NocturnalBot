@@ -1,6 +1,8 @@
 from enum import StrEnum
 from typing import Callable
 
+from raidassign.planner.assign_tasks import assign_tasks
+
 
 class PlayerClass(StrEnum):
     TANK = "Tank"
@@ -60,7 +62,7 @@ class PartyMember:
         self.discord_user_id: int = discord_user_id
         self.class_name: str = class_name
         self.spec: str = spec
-        self.role: str = role
+        self.role: PlayerClass | None = role
         self.group: int | None = group
 
 
@@ -127,20 +129,60 @@ class Party:
 
         return [member.name for member in self.members if filter_fn(member)]
 
-    def get_class(self, class_names: list[PlayerClass]) -> list[str]:
+    def get_class(self, class_names: list[PlayerClass] | set[PlayerClass]) -> list[str]:
         """
         Returns a list of players who can use a specific class.
         """
         return [member.name for member in self.members if member.class_name in class_names]
 
-    def get_role(self, role_names: list[PlayerClass]) -> list[str]:
+    def get_role(self, role_names: list[PlayerClass] | set[PlayerClass]) -> list[str]:
         """
         Returns a list of players who can use a specific role.
         """
         return [member.name for member in self.members if member.role in role_names]
 
-    def get_spec(self, spec_names: list[PlayerSpec]) -> list[str]:
+    def get_spec(self, spec_names: list[PlayerSpec] | set[PlayerClass]) -> list[str]:
         """
         Returns a list of players who can use a specific spec.
         """
         return [member.name for member in self.members if member.spec in spec_names]
+
+    def get_raid_decursers_fav_dps_formatted(self) -> str:
+        decursers, _ = assign_tasks(self.get_decursers(favour="dps"),
+                                    [f"G{i}" for i in range(1, 8)],
+                                    invert_result=True)
+
+        return "; ".join([
+            f"{group}={', '.join(players)}"
+            for group, players in decursers.items()
+        ])
+
+    def get_raid_dispelers_formatted(self) -> str:
+        dispelers, _ = assign_tasks(self.get_dispelers(favour="any"),
+                                    [f"G{i}" for i in range(1, 8)],
+                                    invert_result=True)
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in dispelers.items()
+        ])
+
+    def get_interrupts_formatted(self, targets: list[str],
+                                 use_shamans: bool = False,
+                                 use_mages: bool = False) -> str:
+        """
+        Assign rogues, warriors, mages and shamans to interrupt the targets.
+        Shamans' earth shock has shorter spell lockout.
+        """
+        class_names = [PlayerClass.ROGUE, PlayerClass.WARRIOR]
+        if use_shamans:
+            class_names.append(PlayerClass.SHAMAN)
+        if use_mages:
+            class_names.append(PlayerClass.MAGE)
+        kickers, _ = assign_tasks(
+            players=self.get_class(class_names=class_names),
+            tasks=targets
+        )
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in kickers.items()
+        ])
