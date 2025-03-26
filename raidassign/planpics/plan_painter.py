@@ -132,3 +132,26 @@ class PlanPainter:
         xpos = int(xy_relative[0] * self.image.width)
         ypos = int(xy_relative[1] * self.image.height)
         self.draw.text((xpos, ypos), text, font=self.font, fill=color)
+
+    def draw_polygon(self, rel_points: list[tuple[float, float]],
+                     color: tuple[int, int, int, int] | None = (255, 255, 255, 255),
+                     outline: tuple[int, int, int, int] | None = (0, 0, 0, 255),
+                     width: int = 2):
+        """
+        Creates a polygon filled with color and outlined.
+        The coords are relative to the image size.
+        """
+        def rel_point_to_xy(rel_point: tuple[float, float]) -> tuple[int, int]:
+            return (int(rel_point[0] * self.image.width), int(rel_point[1] * self.image.height))
+
+        points = list(map(rel_point_to_xy, rel_points))
+
+        if color:
+            # self.draw.polygon(points, fill=color)
+            mask = Image.new('RGBA', self.image.size, (0, 0, 0, 0))
+            mask_draw = ImageDraw.Draw(mask)
+            mask_draw.polygon(points, fill=color)
+            self.image.alpha_composite(mask)
+
+        if outline:
+            self.draw.polygon(points, fill=None, outline=outline, width=width)

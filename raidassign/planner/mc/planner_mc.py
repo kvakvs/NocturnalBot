@@ -1,7 +1,4 @@
-import discord
 import toml
-from raidassign.planner.assign_tasks import assign_tasks, invert_dict
-from raidassign.planner.discord_const import RAID_MARK
 from raidassign.planner.mc.all_bosses_mc import AllBossesMC
 from raidassign.planner.mc.garr import Garr
 from raidassign.planner.mc.baron_geddon import BaronGeddon
@@ -12,7 +9,6 @@ from raidassign.planner.mc.majordomo_executus import MajordomoExecutus
 from raidassign.planner.mc.ragnaros import Ragnaros
 from raidassign.planner.mc.shazzrah import Shazzrah
 from raidassign.planner.mc.sulfuron_harbinger import SulfuronHarbinger
-from raidassign.planner.party import Party, PlayerClass, PlayerSpec
 from raidassign.planner.planner import BasePlanner
 
 
