@@ -1,4 +1,5 @@
 from raidassign.planner.bwl.broodlord_lashlayer import BroodlordLashlayer
+from raidassign.planner.bwl.chromaggus import Chromaggus
 from raidassign.planner.bwl.ebonroc import Ebonroc
 from raidassign.planner.bwl.firemaw import Firemaw
 from raidassign.planner.bwl.flamegor import Flamegor
@@ -30,4 +31,5 @@ class PlannerBWL:
             "firemaw": Firemaw(),
             "ebonroc": Ebonroc(),
             "flamegor": Flamegor(),
+            "chromaggus": Chromaggus(),
         }

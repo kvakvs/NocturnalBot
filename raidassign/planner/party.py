@@ -25,7 +25,8 @@ class PlayerClass(StrEnum):
 
 class PlayerSpec(StrEnum):
     BALANCE = "Balance"
-    RESTORATION = "Restoration"
+    RESTORATION_DRUID = "Restoration"
+    RESTORATION_SHAMAN = "Restoration1"
     FERAL = "Feral"
     ENHANCEMENT = "Enhancement"
     ELEMENTAL = "Elemental"
@@ -84,11 +85,12 @@ class Party:
 
         def filter_healing_druids(member):
             """Favours healing druids only"""
-            return member.class_name == PlayerClass.DRUID and member.spec == PlayerSpec.RESTORATION
+            return (member.class_name == PlayerClass.DRUID and member.spec == PlayerSpec.RESTORATION_DRUID)
 
         def filter_any_decursers(member):
             """Takes any of the above"""
-            return member.class_name == PlayerClass.MAGE or member.class_name == PlayerClass.DRUID
+            return member.class_name == PlayerClass.MAGE or \
+                (member.class_name == PlayerClass.DRUID and member.spec != PlayerSpec.FERAL)
 
         filter_fn: Callable[[PartyMember], bool]
         if favour == "dps":
@@ -136,6 +138,15 @@ class Party:
         """
         return [member.name for member in self.members if member.class_name in class_names]
 
+    def get_class_spec(self, class_names: list[PlayerClass] | set[PlayerClass],
+                       spec_names: list[PlayerSpec] | set[PlayerSpec]) -> list[str]:
+        """
+        Returns a list of players who are of a specific class and spec.
+        """
+        return [member.name
+                for member in self.members
+                if member.class_name in class_names and member.spec in spec_names]
+
     def get_role(self, role_names: list[PlayerClass] | set[PlayerClass]) -> list[str]:
         """
         Returns a list of players who can use a specific role.
@@ -148,9 +159,17 @@ class Party:
         """
         return [member.name for member in self.members if member.spec in spec_names]
 
+    def get_disease_cleansers(self, only_healers: bool = False) -> list[str]:
+        return self.get_class_spec(class_names=[PlayerClass.PRIEST, PlayerClass.SHAMAN],
+                                   spec_names=[PlayerSpec.HOLY, PlayerSpec.DISCIPLINE, PlayerSpec.RESTORATION_SHAMAN])
+
+    def get_poison_cleansers(self, only_healers: bool = False) -> list[str]:
+        return self.get_class_spec(class_names=[PlayerClass.DRUID, PlayerClass.SHAMAN],
+                                   spec_names=[PlayerSpec.RESTORATION_DRUID, PlayerSpec.RESTORATION_SHAMAN])
+
     def get_raid_decursers_fav_dps_formatted(self) -> str:
         decursers, _ = assign_tasks(self.get_decursers(favour="dps"),
-                                    [f"G{i}" for i in range(1, 8)],
+                                    [f"G{i}" for i in range(1, 9)],
                                     invert_result=True)
 
         return "; ".join([
@@ -160,11 +179,38 @@ class Party:
 
     def get_raid_dispelers_formatted(self) -> str:
         dispelers, _ = assign_tasks(self.get_dispelers(favour="any"),
-                                    [f"G{i}" for i in range(1, 8)],
+                                    [f"G{i}" for i in range(1, 9)],
                                     invert_result=True)
         return "; ".join([
             f"{group}={','.join(players)}"
             for group, players in dispelers.items()
+        ])
+
+    def get_raid_decursers_formatted(self) -> str:
+        decursers, _ = assign_tasks(self.get_decursers(favour="any"),
+                                    [f"G{i}" for i in range(1, 9)],
+                                    invert_result=True)
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in decursers.items()
+        ])
+
+    def get_raid_disease_cleansers_formatted(self, only_healers: bool = False) -> str:
+        cleansers, _ = assign_tasks(self.get_disease_cleansers(only_healers=only_healers),
+                                    [f"G{i}" for i in range(1, 9)],
+                                    invert_result=True)
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in cleansers.items()
+        ])
+
+    def get_raid_poison_cleansers_formatted(self, only_healers: bool = False) -> str:
+        cleansers, _ = assign_tasks(self.get_poison_cleansers(only_healers=only_healers),
+                                    [f"G{i}" for i in range(1, 9)],
+                                    invert_result=True)
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in cleansers.items()
         ])
 
     def assign_to_class_formatted(self, class_names: list[PlayerClass] | set[PlayerClass],
