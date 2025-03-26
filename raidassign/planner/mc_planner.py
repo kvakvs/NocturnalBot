@@ -54,7 +54,7 @@ class McPlanner:
                             value=f"/rw Dispel Magic (SELF FIRST): {formatted_dispelers}")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-lucifron.png", filename="mc-lucifron.png")
+                file=discord.File("images/mc/lucifron.png", filename="mc-lucifron.png")
             )
 
     class Magmadar(BasePlanner):
@@ -76,7 +76,7 @@ class McPlanner:
                             value="/rw Stay spread, max distance, tremor totems or stay away from fire")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-magmadar.png", filename="mc-magmadar.png")
+                file=discord.File("images/mc/magmadar.png", filename="mc-magmadar.png")
             )
 
     class Gehennas(BasePlanner):
@@ -99,7 +99,7 @@ class McPlanner:
                             value=f"/rw Decurses {formatted_decursers}")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-gehennas.png", filename="mc-gehennas.png")
+                file=discord.File("images/mc/gehennas.png", filename="mc-gehennas.png")
             )
 
     class Garr(BasePlanner):
@@ -145,7 +145,7 @@ class McPlanner:
             embed.add_field(name="Pull", value="/rw Main tank pull with shield wall, warlocks banish")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-garr.png", filename="mc-garr.png")
+                file=discord.File("images/mc/garr.png", filename="mc-garr.png")
             )
 
     class Geddon(BasePlanner):
@@ -162,7 +162,7 @@ class McPlanner:
                 name="Dispel", value=f"/rw Dispel magic: {formatted_dispelers}")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-geddon.png", filename="mc-geddon.png")
+                file=discord.File("images/mc/geddon.png", filename="mc-geddon.png")
             )
 
     class Shazzrah(BasePlanner):
@@ -177,7 +177,7 @@ class McPlanner:
                             value=f"/rw Decursing (SELF FIRST): {formatted_decursers}")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-shazzrah.png", filename="mc-shazzrah.png")
+                file=discord.File("images/mc/shazzrah.png", filename="mc-shazzrah.png")
             )
 
     class SulfuronHarbinger(BasePlanner):
@@ -191,7 +191,7 @@ class McPlanner:
             embed.add_field(name="Interrupts", value=f"/rw Interrupts: {formatted_kickers}")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-sulfuron-harbinger.png", filename="mc-sulfuron-harbinger.png")
+                file=discord.File("images/mc/sulfuron-harbinger.png", filename="mc-sulfuron-harbinger.png")
             )
 
     class Majordomo(BasePlanner):
@@ -220,7 +220,7 @@ class McPlanner:
             embed.add_field(name="Tanks", value=f"/rw Boss: {main_tank}, offtanks: {formatted_tanks}")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-majordomo-executus.png", filename="mc-majordomo-executus.png")
+                file=discord.File("images/mc/majordomo-executus.png", filename="mc-majordomo-executus.png")
             )
 
     class Ragnaros(BasePlanner):
@@ -233,7 +233,7 @@ class McPlanner:
             embed.set_image(url="attachment://mc-ragnaros.png")
             await interaction.followup.send(
                 embed=embed,
-                file=discord.File("images/mc-ragnaros.png", filename="mc-ragnaros.png")
+                file=discord.File("images/mc/ragnaros.png", filename="mc-ragnaros.png")
             )
 
     @staticmethod
