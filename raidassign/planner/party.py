@@ -20,6 +20,7 @@ class PlayerClass(StrEnum):
     TENTATIVE = "Tentative"
     ABSENCE = "Absence"
     BENCH = "Bench"
+    LATE = "Late"
 
 
 class PlayerSpec(StrEnum):

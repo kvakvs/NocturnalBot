@@ -11,7 +11,7 @@ def get_3_tanks(tanks: list[str]) -> tuple[str, str, str]:
     return tanks[0], tanks[1], tanks[2]
 
 
-class McPlanner:
+class PlannerMC:
     @staticmethod
     def get_config(section: str) -> dict:
         config = toml.load("mc_planner.toml")
@@ -19,7 +19,7 @@ class McPlanner:
 
     class AllBosses(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            all_conf = McPlanner.get_config("all_bosses")
+            all_conf = PlannerMC.get_config("all_bosses")
             preferred_healers_maintank = all_conf["preferred_healers_maintank"]
             preferred_healers_offtank = all_conf["preferred_healers_offtank"]
             embed = discord.Embed(
@@ -33,7 +33,7 @@ class McPlanner:
 
     class Lucifron(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            all_conf = McPlanner.get_config("all_bosses")
+            all_conf = PlannerMC.get_config("all_bosses")
             maintank, offtank1, offtank2 = get_3_tanks(all_conf["tanks"])
 
             formatted_decursers = party.get_raid_decursers_fav_dps_formatted()
@@ -81,7 +81,7 @@ class McPlanner:
 
     class Gehennas(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            all_conf = McPlanner.get_config("all_bosses")
+            all_conf = PlannerMC.get_config("all_bosses")
             maintank, offtank1, offtank2 = get_3_tanks(all_conf["tanks"])
             formatted_decursers = party.get_raid_decursers_fav_dps_formatted()
 
@@ -204,7 +204,7 @@ class McPlanner:
                 targets=[RAID_MARK[8], RAID_MARK[7]],
                 one_per_player=True)
 
-            all_conf = McPlanner.get_config("all_bosses")
+            all_conf = PlannerMC.get_config("all_bosses")
             main_tank = all_conf["tanks"][0]
             formatted_tanks = party.assign_to_tanks_formatted(
                 exclude_tanks=[main_tank],  # main tank does not tank the marked targets, boss only
@@ -239,14 +239,14 @@ class McPlanner:
     @staticmethod
     def get_all() -> dict[str, BasePlanner]:
         return {
-            "all": McPlanner.AllBosses(),
-            "lucifron": McPlanner.Lucifron(),
-            "magmadar": McPlanner.Magmadar(),
-            "gehennas": McPlanner.Gehennas(),
-            "garr": McPlanner.Garr(),
-            "geddon": McPlanner.Geddon(),
-            "shazzrah": McPlanner.Shazzrah(),
-            "sulfuron": McPlanner.SulfuronHarbinger(),
-            "majordomo": McPlanner.Majordomo(),
-            "ragnaros": McPlanner.Ragnaros()
+            "all": PlannerMC.AllBosses(),
+            "lucifron": PlannerMC.Lucifron(),
+            "magmadar": PlannerMC.Magmadar(),
+            "gehennas": PlannerMC.Gehennas(),
+            "garr": PlannerMC.Garr(),
+            "geddon": PlannerMC.Geddon(),
+            "shazzrah": PlannerMC.Shazzrah(),
+            "sulfuron": PlannerMC.SulfuronHarbinger(),
+            "majordomo": PlannerMC.Majordomo(),
+            "ragnaros": PlannerMC.Ragnaros()
         }

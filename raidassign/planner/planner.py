@@ -14,19 +14,22 @@ class BasePlanner:
 
 
 def get_planners_for(raid: str, only_bosses: Set[str] | None) -> List[BasePlanner]:
+    selected_planners_dict: dict[str, BasePlanner] = {}
+
     if raid == "mc":
-        from raidassign.planner.mc_planner import McPlanner
-        return [p
-                for name, p in McPlanner.get_all().items()
-                if not only_bosses or name in only_bosses]
-    # elif raid == "bwl":
-    #     return BwlPlanner()
-    # elif raid == "aq40":
-    #     return Aq40Planner()
-    # elif raid == "naxx":
-    #     return NaxxPlanner()
+        from raidassign.planner.planner_mc import PlannerMC
+        selected_planners_dict = PlannerMC.get_all()
+
+    elif raid == "bwl":
+        from raidassign.planner.planner_bwl import PlannerBWL
+        selected_planners_dict = PlannerBWL.get_all()
+
     else:
         raise ValueError(f"No planner found for raid: {raid}")
+
+    return [p
+            for name, p in selected_planners_dict.items()
+            if not only_bosses or name in only_bosses]
 
 
 def extract_party(raid_event: RaidEvent, raid_plan: RaidPlan | None) -> Party:

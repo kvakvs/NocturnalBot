@@ -2,11 +2,14 @@ import io
 from PIL import Image, ImageFont, ImageDraw
 
 
-class ImagePlan:
+class PlanPainter:
     """
     Loads a raid room image, overlays the positions and assigns on it, outputs the image
     ready to be published on discord.
     """
+    COLOR_RAGE = (100, 0, 0, 255)
+    COLOR_MANA = (0, 0, 128, 255)
+    COLOR_PLAYER = (0, 64, 0, 255)
 
     def __init__(self, image_path: str):
         # Load with alpha channel
@@ -35,7 +38,7 @@ class ImagePlan:
         return int(r - l), int(b - t)
 
     def add_icon(self, icon_path: str,
-                 xrel: float, yrel: float,
+                 xy_relative: tuple[float, float],
                  icon_size: int,
                  text: str | None = None,
                  background_color: tuple[int, int, int, int] = (0, 0, 0, 255)):
@@ -44,8 +47,8 @@ class ImagePlan:
         """
         icon = Image.open(icon_path)
         icon = icon.resize((icon_size, icon_size))
-        xpos = int(xrel * self.image.width)
-        ypos = int(yrel * self.image.height)
+        xpos = int(xy_relative[0] * self.image.width)
+        ypos = int(xy_relative[1] * self.image.height)
 
         # Center the icon on the position
         center_on_xpos = xpos - icon.width // 2
