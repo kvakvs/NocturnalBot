@@ -69,7 +69,8 @@ class Firemaw(BasePlanner):
         text_embed = discord.Embed(
             title="Firemaw",
             color=0x800000,
-            description="A bit finicky fight with a lot of moving parts and fire AoE damage."
+            description="A bit finicky fight with a lot of moving parts and fire AoE damage." +
+            "Use Onyxia Scale Cloak if the dragon will ever look at you."
         )
         text_embed.add_field(name="Boss Abilities",
                              value="Flame Buffet :fire:, Shadow Flame :fire:, Wing Buffet")

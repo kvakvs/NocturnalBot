@@ -1,5 +1,7 @@
 from raidassign.planner.bwl.broodlord_lashlayer import BroodlordLashlayer
+from raidassign.planner.bwl.ebonroc import Ebonroc
 from raidassign.planner.bwl.firemaw import Firemaw
+from raidassign.planner.bwl.flamegor import Flamegor
 from raidassign.planner.bwl.razorgore import Razorgore
 from raidassign.planner.bwl.suppression_room import SuppressionRoom
 from raidassign.planner.bwl.vaelastrasz import Vaelastrasz
@@ -26,4 +28,6 @@ class PlannerBWL:
             "suppression": SuppressionRoom(),
             "broodlord": BroodlordLashlayer(),
             "firemaw": Firemaw(),
+            "ebonroc": Ebonroc(),
+            "flamegor": Flamegor(),
         }
