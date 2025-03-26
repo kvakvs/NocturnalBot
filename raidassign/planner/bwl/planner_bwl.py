@@ -1,3 +1,4 @@
+from raidassign.planner.bwl.broodlord_lashlayer import BroodlordLashlayer
 from raidassign.planner.bwl.razorgore import Razorgore
 from raidassign.planner.bwl.suppression_room import SuppressionRoom
 from raidassign.planner.bwl.vaelastrasz import Vaelastrasz
@@ -21,5 +22,6 @@ class PlannerBWL:
         return {
             "razorgore": Razorgore(),
             "vaelastrasz": Vaelastrasz(),
-            "suppression": SuppressionRoom()
+            "suppression": SuppressionRoom(),
+            "broodlord": BroodlordLashlayer(),
         }

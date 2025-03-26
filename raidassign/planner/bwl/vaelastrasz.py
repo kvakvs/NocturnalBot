@@ -39,18 +39,19 @@ class Vaelastrasz(BasePlanner):
         text_embed = discord.Embed(
             title="Vaelastrasz",
             color=0x800000,
-            description="Chain Cleave! Main tank becomes the bomb in 1 minute. " +
+            description="Chain Cleave! Main tank becomes the bomb every 45 seconds. " +
             "Infinite mana, rage and energy. Feral druids shred, rogues stab. " +
-            "Warriors **DO NOT** heroic strike! Bomb person gets 100%% crit (watch threat!)."
+            r"Warriors **DO NOT** heroic strike! Bomb person gets 100% crit (watch threat!)."
         )
         text_embed.add_field(name="Boss Abilities",
                              value="Chain Cleave :skull:, Flame Breath :fire:, Tail Sweep, Burning Adrenaline :bomb:")
         text_embed.add_field(
-            name="Healers", value="Use fast heals: Flash Heal, Lesser HW/Chain Heal, Regrowth! Max rank heals!")
+            name="Healers", value="Use fast heals: Flash Heal, Chain Heal, Regrowth — Max rank heals")
+        text_embed.add_field(name="All Casters", value="Fire protection potion prevents casting pushback")
         text_embed.set_image(url="attachment://vaelastrasz.png")
 
         plan_embed = discord.Embed(
-            title="Nice Picture",
+            title="Plan: Vaelastrasz",
             color=0x800000,
         )
         plan_embed.set_image(url="attachment://vaelastrasz-plan.png")

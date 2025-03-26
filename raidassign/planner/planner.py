@@ -17,7 +17,7 @@ def get_planners_for(raid: str, only_bosses: Set[str] | None) -> List[BasePlanne
     selected_planners_dict: dict[str, BasePlanner] = {}
 
     if raid == "mc":
-        from raidassign.planner.planner_mc import PlannerMC
+        from raidassign.planner.mc.planner_mc import PlannerMC
         selected_planners_dict = PlannerMC.get_all()
 
     elif raid == "bwl":

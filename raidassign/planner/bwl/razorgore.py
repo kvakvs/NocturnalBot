@@ -68,7 +68,7 @@ class Razorgore(BasePlanner):
         text_embed.set_image(url="attachment://razorgore.png")
 
         plan_embed = discord.Embed(
-            title="Nice Picture",
+            title="Plan: Razorgore",
             color=0x800000,
         )
         plan_embed.set_image(url="attachment://razorgore-plan.png")
