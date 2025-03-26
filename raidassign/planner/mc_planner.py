@@ -80,13 +80,15 @@ class McPlanner:
             )
 
     class Gehennas(BasePlanner):
-        async def run(self, interaction: discord.Interaction, _party: Party):
+        async def run(self, interaction: discord.Interaction, party: Party):
             all_conf = McPlanner.get_config("all_bosses")
             maintank, offtank1, offtank2 = get_3_tanks(all_conf["tanks"])
+            formatted_decursers = party.get_raid_decursers_fav_dps_formatted()
 
             embed = discord.Embed(
                 title="Gehennas",
-                color=0xff0000
+                color=0xff0000,
+                description="DECURSE only tanks (or if the person is at risk). Ranged are usually safe. Stay out of rain of fire"
             )
             embed.set_image(url="attachment://mc-gehennas.png")
             embed.add_field(name="Tanking",
@@ -94,7 +96,7 @@ class McPlanner:
             embed.add_field(name="Offtanks",
                             value="/rw Pull adds away from boss, face away. FAP for tanks.")
             embed.add_field(name="Decursing",
-                            value=f"/rw DECURSE only tanks (or if the person is at risk). Ranged are usually safe. Stay out of rain of fire")
+                            value=f"/rw Decurses {formatted_decursers}")
             await interaction.followup.send(
                 embed=embed,
                 file=discord.File("images/mc-gehennas.png", filename="mc-gehennas.png")
@@ -134,13 +136,13 @@ class McPlanner:
 
             embed = discord.Embed(
                 title="Garr",
-                color=0xff0000
+                color=0xff0000,
+                description="Adds explode on death; Keep Garr 45 yd from adds"
             )
             embed.set_image(url="attachment://mc-garr.png")
             embed.add_field(name="Banish", value=f"/rw Banish: {formatted_banishes}")
             embed.add_field(name="Offtank", value=f"/rw Offtank: {formatted_offtanks}")
             embed.add_field(name="Pull", value="/rw Main tank pull with shield wall, warlocks banish")
-            embed.add_field(name="Safety", value="/rw Adds explode on death; Keep Garr 45 yd from adds")
             await interaction.followup.send(
                 embed=embed,
                 file=discord.File("images/mc-garr.png", filename="mc-garr.png")
@@ -223,7 +225,16 @@ class McPlanner:
 
     class Ragnaros(BasePlanner):
         async def run(self, interaction: discord.Interaction, party: Party):
-            pass
+            embed = discord.Embed(
+                title="Ragnaros",
+                color=0xff0000,
+                description="Wrath of Ragnaros - knockback and threat reset, melee walk out on Wrath. There is no ranged threat, all ranged go bananas!"
+            )
+            embed.set_image(url="attachment://mc-ragnaros.png")
+            await interaction.followup.send(
+                embed=embed,
+                file=discord.File("images/mc-ragnaros.png", filename="mc-ragnaros.png")
+            )
 
     @staticmethod
     def get_all() -> dict[str, BasePlanner]:
