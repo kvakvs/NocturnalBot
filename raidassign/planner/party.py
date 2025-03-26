@@ -166,6 +166,34 @@ class Party:
             for group, players in dispelers.items()
         ])
 
+    def assign_to_class_formatted(self, class_names: list[PlayerClass] | set[PlayerClass],
+                                  targets: list[str],
+                                  one_per_player: bool = False) -> str:
+        players_of_class, _ = assign_tasks(self.get_class(class_names=class_names),
+                                           targets,
+                                           one_per_player=one_per_player)
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in players_of_class.items()
+        ])
+
+    def get_tanks_except(self, exclude_tanks: list[PlayerClass] | set[PlayerClass]) -> list[str]:
+        all_tanks = self.get_role(role_names=[PlayerClass.TANK])
+        return [tank for tank in all_tanks if tank not in exclude_tanks]
+
+    def assign_to_tanks_formatted(self, exclude_tanks: list[PlayerClass] | set[PlayerClass],
+                                  targets: list[str],
+                                  one_per_player: bool = False) -> str:
+        """Select all tanks, exclude main tank (or any in 'exclude_tanks') and assign targets."""
+        offtanks = self.get_tanks_except(exclude_tanks)
+        players_of_role, _ = assign_tasks(offtanks,
+                                          targets,
+                                          one_per_player=one_per_player)
+        return "; ".join([
+            f"{group}={','.join(players)}"
+            for group, players in players_of_role.items()
+        ])
+
     def get_interrupts_formatted(self, targets: list[str],
                                  use_shamans: bool = False,
                                  use_mages: bool = False) -> str:
@@ -180,7 +208,8 @@ class Party:
             class_names.append(PlayerClass.MAGE)
         kickers, _ = assign_tasks(
             players=self.get_class(class_names=class_names),
-            tasks=targets
+            tasks=targets,
+            one_per_player=True
         )
         return "; ".join([
             f"{group}={','.join(players)}"
