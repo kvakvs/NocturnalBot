@@ -1,43 +1,39 @@
 from raidassign.planpics.plan_painter import PlanPainter
 
 
-plan = PlanPainter("images/bwl/room-chromaggus.png")
+plan = PlanPainter("images/bwl/room-nefarian.png")
 
-# Draw Red Zone where the boss will be casting the breaths
-plan.draw_polygon(
-    rel_points=[(0.0, 1.0), (0.0, 0.68), (0.33, 0.49), (0.37, 0.28), (0.46, 0.28), (0.47, 0.0),
-                (0.65, 0.0), (0.625, 0.105), (0.64, 0.275), (0.725, 0.275), (0.78, 0.49), (1.0, 1.0)],
-    color=(255, 0, 0, 64),
-    outline=(255, 0, 0, 255),
-    width=3)
-
-# Boss (Cerberus icon)
-plan.add_icon("images/bwl/cerberus.png",
-              (0.55, 0.35), 160,
-              text="Chromaggus",
+plan.add_icon("images/black-dragon.png",
+              (0.45, 0.32), 200,
+              text="Nefarian",
               background_color=PlanPainter.COLOR_RAGE)
 
-# Tanks
+
+plan.add_icon("images/bow-and-arrow.png",
+              (0.9, 0.4), 96,
+              text="Ranged And Healers",
+              background_color=PlanPainter.COLOR_PLAYER)
+
+plan.add_icon("images/orc.png",
+              (0.55, 0.3), 64,
+              text="Melee",
+              background_color=PlanPainter.COLOR_PLAYER)
+
 plan.add_icon("images/shield.png",
-              (0.55, 0.53), 64,
+              (0.45, 0.1), 32,
               text="Main Tank",
               background_color=PlanPainter.COLOR_PLAYER)
 
-for spot_rel in [(0.39, 0.25), (0.45, 0.175), (0.47, 0.05)]:
-    plan.add_icon("images/orc.png",
-                  spot_rel, 48,
-                  text="Melee Safe Spot",
-                  background_color=PlanPainter.COLOR_PLAYER)
+plan.add_icon("images/sheep.png",
+              (0.7, 0.9), 80,
+              text="Mage Call Safe Spot",
+              background_color=PlanPainter.COLOR_PLAYER_ORANGE)
+plan.draw_arrow((0.75, 0.87), 50, 270, color=(255, 255, 0, 255), width=3)
 
-plan.add_icon("images/bow-and-arrow.png",
-              (0.15, 0.5), 64,
-              text="Ranged",
-              background_color=PlanPainter.COLOR_PLAYER)
-plan.add_icon("images/nurse.png",
-              (0.22, 0.5), 64,
-              text="Healers",
-              background_color=PlanPainter.COLOR_PLAYER)
+plan.draw_text((0.1, 0.05), "View of Searing Gorge", color=(255, 255, 0, 255))
+plan.draw_arrow((0.17, 0.1), 50, 90, color=(255, 255, 0, 255), width=3)
 
+plan.draw_text((0.93, 0.73), "Throne", color=(255, 255, 0, 255))
 
 # Write io.BytesIO to a file
 out_file = "test_image_plan_out.jpg"

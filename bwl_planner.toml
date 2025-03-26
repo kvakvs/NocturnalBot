@@ -1,0 +1,4 @@
+[chromaggus]
+# Edit for the current week. Leave empty list to print all breaths.
+# breaths=["black", "bronze", "blue", "green", "red"]
+breaths = ["black", "red"]

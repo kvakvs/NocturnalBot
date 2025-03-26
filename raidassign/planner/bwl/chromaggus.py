@@ -1,17 +1,60 @@
 
 import discord
+import toml
 from raidassign.planner.party import Party
 from raidassign.planner.planner import BasePlanner
 from raidassign.planpics.plan_painter import PlanPainter
 
 
 class Chromaggus(BasePlanner):
+    @staticmethod
+    def format_breaths_intro(this_weeks_breaths: list[str]) -> str:
+        """
+        Given a list of strings, return a string with the choices for this week + remaining choices.
+        """
+        black = ":black_heart: Black (Ignite Flesh, 1 min of fire DoT)\n"
+        bronze = (r":yellow_heart: Bronze (Time Lapse - 6 second stun and your existing threat is reduced to 50%)" +
+                  ":warning: **EVERYONE** steps out and takes this breath!\n")
+        blue = ":blue_heart: Blue (Frost Burn, 15 seconds of slow attack speed and 1400 Frost damage)\n"
+        green = ":green_heart: Green (Corrosive Acid, 1000 Nature every 3 seconds for 15 seconds and reduced armor by 4500)\n"
+        red = ":heart: Red (Incinerate, 4000 Fire damage once).\n"
+        all_breaths = ["black", "bronze", "blue", "green", "red"]
+
+        def breath_name_to_text(breath: str) -> str:
+            if breath == "black":
+                return black
+            elif breath == "bronze":
+                return bronze
+            elif breath == "blue":
+                return blue
+            elif breath == "green":
+                return green
+            elif breath == "red":
+                return red
+            else:
+                raise ValueError(f"Invalid breath: {breath}")
+
+        if len(this_weeks_breaths) == 0:
+            return ("Selects 2 random AoE attacks (breaths) from 5 choices every week, the choice is fixed for the full week." +
+                    "All choices:\n" + "\n".join(map(breath_name_to_text, all_breaths)))
+        else:
+            out = "The choices for this week are:\n"
+            for breath in this_weeks_breaths:
+                out += breath_name_to_text(breath)
+
+            out += "\nThe other choices (not this week):\n"
+            for breath in all_breaths:
+                if breath not in this_weeks_breaths:
+                    out += breath_name_to_text(breath)
+            return out
+
     async def run(self, interaction: discord.Interaction, party: Party):
         """
         Draw a plan for the Chromaggus fight.
         """
-
         plan = PlanPainter("images/bwl/room-chromaggus.png")
+        conf = toml.load("bwl_planner.toml")
+        this_weeks_breaths = conf["chromaggus"]["breaths"]
 
         # Draw Red Zone where the boss will be casting the breaths
         plan.draw_polygon(
@@ -51,13 +94,7 @@ class Chromaggus(BasePlanner):
         text_embed = discord.Embed(
             title="Chromaggus",
             color=0x800000,
-            description="Selects 2 random AoE attacks (breaths) from 5 choices every week, the choice is fixed for the full week." +
-            "The choices:\n" +
-            ":black_heart: Black (Ignite Flesh, 1 min of fire DoT)\n" +
-            r":yellow_heart: Bronze (Time Lapse - 6 second stun and your existing threat is reduced to 50%)" + "\n" +
-            ":blue_heart: Blue (Frost Burn, 15 seconds of slow attack speed and 1400 Frost damage)\n" +
-            ":green_heart: Green (Corrosive Acid, 1000 Nature every 3 seconds for 15 seconds and reduced armor by 4500)\n" +
-            ":heart: Red (Incinerate, 4000 Fire damage once).\n"
+            description=Chromaggus.format_breaths_intro(this_weeks_breaths)
             + "\n" +
             "Also randomly debuffs players with 5 Brood Afflictions:\n" +
             ":black_large_square: Black (**curse**, increased fire damage taken)\n" +
