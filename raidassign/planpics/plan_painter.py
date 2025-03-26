@@ -10,6 +10,7 @@ class PlanPainter:
     COLOR_RAGE = (100, 0, 0, 255)
     COLOR_MANA = (0, 0, 128, 255)
     COLOR_PLAYER = (0, 64, 0, 255)
+    COLOR_PLAYER_ORANGE = (192, 128, 0, 255)
 
     def __init__(self, image_path: str):
         # Load with alpha channel
