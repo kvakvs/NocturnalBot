@@ -1,16 +1,10 @@
 from typing import List, Set
 import discord
 
+from raidassign.planner.base_planner import BasePlanner
 from raidassign.planner.party import Party, PartyMember, get_role
 from raidassign.raidhelperbot.raid_event import RaidEvent
 from raidassign.raidhelperbot.raid_plan import RaidPlan
-
-
-class BasePlanner:
-    """Abstract base class for all planners."""
-
-    async def run(self, interaction: discord.Interaction, party: Party):
-        await interaction.followup.send("This default planner implementation does nothing.", ephemeral=True)
 
 
 def get_planners_for(raid: str, only_bosses: Set[str] | None) -> List[BasePlanner]:

@@ -9,7 +9,7 @@ plan.add_icon("images/black-dragon.png",
               background_color=PlanPainter.COLOR_RAGE)
 
 
-plan.add_icon("images/bow-and-arrow.png",
+plan.add_icon("images/bow-  Iand-arrow.png",
               (0.9, 0.4), 96,
               text="Ranged And Healers",
               background_color=PlanPainter.COLOR_PLAYER)

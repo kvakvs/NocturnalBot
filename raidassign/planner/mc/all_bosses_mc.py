@@ -1,7 +1,7 @@
 import discord
+from raidassign.planner.base_planner import BasePlanner
 from raidassign.planner.mc.planner_mc import PlannerMC
 from raidassign.planner.party import Party
-from raidassign.planner.planner import BasePlanner
 
 
 class AllBossesMC(BasePlanner):
